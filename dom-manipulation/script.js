@@ -12,28 +12,29 @@ const quotes = [
 ];
 
 function showRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
-
-  quoteDisplay.textContent = `"${randomQuote.text}" - ${randomQuote.category}`;
-}
-
-newQuoteButton.addEventListener('click', showRandomQuote);
-
-function addQuote() {
-  const quoteText = newQuoteText.value;
-  const quoteCategory = newQuoteCategory.value;
-
-  if (quoteText && quoteCategory) {
-    const newQuote = { text: quoteText, category: quoteCategory };
-    quotes.push(newQuote);
-    newQuoteText.value = '';
-    newQuoteCategory.value = '';
-    showRandomQuote(); // Display a new quote, including the added one
-  } else {
-    alert('Please enter both quote and category');
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex];
+  
+    quoteDisplay.textContent = `"${randomQuote.text}"   
+   - ${randomQuote.category}`;
   }
-}
-
-// Initial quote display
-showRandomQuote();
+  
+  newQuoteButton.addEventListener('click', showRandomQuote);
+  
+  function addQuote() {
+    const quoteText = newQuoteText.value;
+    const quoteCategory = newQuoteCategory.value;
+  
+    if (quoteText && quoteCategory) {
+      const newQuote = { text: quoteText, category: quoteCategory };
+      quotes.push(newQuote);
+      newQuoteText.value = '';
+      newQuoteCategory.value = '';
+      showRandomQuote(); // Display a new quote, including the added one
+    } else {
+      alert('Please enter both quote and category');
+    }
+  }
+  
+  // Initial quote display
+  showRandomQuote();
