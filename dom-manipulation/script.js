@@ -21,136 +21,135 @@ let categories = [];
 //];
 
 function createQuoteElement(quote) {
-    const quoteElement = document.createElement('div');
-    quoteElement.textContent = `"${quote.text}" - ${quote.category}`;
-    return quoteElement;
+  const quoteElement = document.createElement('div');
+  quoteElement.textContent = `"${quote.text}" - ${quote.category}`;
+  return quoteElement;
 }
   
 function displayQuotes() {
-    quoteDisplay.innerHTML = ''; // Clear previous quotes
-    quotes.forEach(quote => {
-      const quoteElement = createQuoteElement(quote);
-      quoteDisplay.appendChild(quoteElement);
-    });
+  quoteDisplay.innerHTML = ''; // Clear previous quotes
+  quotes.forEach(quote => {
+    const quoteElement = createQuoteElement(quote);
+    quoteDisplay.appendChild(quoteElement);
+  });
 }
 
 function showRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const randomQuote = quotes[randomIndex];
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const randomQuote = quotes[randomIndex];
   
-    quoteDisplay.innerHTML = `"${randomQuote.text}"   
-   - ${randomQuote.category}`;
+  quoteDisplay.innerHTML = `"${randomQuote.text}"   
+  - ${randomQuote.category}`;
 }
 
 newQuoteButton.addEventListener('click', showRandomQuote);
   
 function createAddQuoteForm() {
-    const quoteText = newQuoteText.value;
-    const quoteCategory = newQuoteCategory.value;
+  const quoteText = newQuoteText.value;
+  const quoteCategory = newQuoteCategory.value;
   
-    if (quoteText && quoteCategory) {
-      const newQuote = { text: quoteText, category: quoteCategory };
-
-      fetch(SERVER_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newQuote)
-      })
-      .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-          // Handle successful   
-        //post response, e.g., update local quotes if necessary
-            console.log('Quote added successfully:', data);
-        })
-        .catch(error => {
-            console.error('Error adding quote:', error);
-        });
-
-      quotes.push(newQuote);
-      newQuoteText.value = '';
-      newQuoteCategory.value = '';
-      saveQuotes();
-      updateCategories();
-      filterQuotes();
-      showRandomQuote(); // Display a new quote, including the added one
+  if (quoteText && quoteCategory) {
+    const newQuote = { text: quoteText, category: quoteCategory };
+    fetch(SERVER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newQuote)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle successful   
+      //post response, e.g., update local quotes if necessary
+      console.log('Quote added successfully:', data);
+    })
+    .catch(error => {
+      console.error('Error adding quote:', error);
+    });
+    
+    quotes.push(newQuote);
+    newQuoteText.value = '';
+    newQuoteCategory.value = '';
+    saveQuotes();
+    updateCategories();
+    filterQuotes();
+    showRandomQuote(); // Display a new quote, including the added one
     } else {
       alert('Please enter both quote and category');
     }
 }
   
 function saveQuotes() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
 }
 
 function updateCategories() {
-    categories = Array.from(new Set(quotes.map(quote => quote.category)));
-    populateCategories();
+  categories = Array.from(new Set(quotes.map(quote => quote.category)));
+  populateCategories();
 }
   
 function populateCategories() {
-    categoryFilter.innerHTML = '';
-    const allOption = document.createElement('option');
-    allOption.value = 'all';
-    allOption.text = 'All Categories';
-    categoryFilter.appendChild(allOption);
+  categoryFilter.innerHTML = '';
+  const allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.text = 'All Categories';
+  categoryFilter.appendChild(allOption);
   
-    categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category;
-      option.text   
-   = category;
-      categoryFilter.appendChild(option);   
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.text   
+    = category;
+    categoryFilter.appendChild(option);   
+
+  });
   
-    });
-  
-    // Restore last selected filter
-    const lastFilter = localStorage.getItem(FILTER_KEY);
-    if (lastFilter) {
-      categoryFilter.value = lastFilter;
-    }
+  // Restore last selected filter
+  const lastFilter = localStorage.getItem(FILTER_KEY);
+  if (lastFilter) {
+    categoryFilter.value = lastFilter;
+  }
 }
   
 function filterQuotes() {
-    const selectedCategory = categoryFilter.value;
-    const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
-    displayQuotes(filteredQuotes);
-    localStorage.setItem(FILTER_KEY, selectedCategory);
+  const selectedCategory = categoryFilter.value;
+  const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
+  displayQuotes(filteredQuotes);
+  localStorage.setItem(FILTER_KEY, selectedCategory);
 }
 
 function importFromJsonFile (event) {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
+  const file = event.target.files[0];
+  if (!file) {
+    return;
+  }
 }
 
 const fileReader = new FileReader();
 fileReader.onload = function(event) {
-    try {
-        const importedQuotes = JSON.parse(event.target.result);
-        quotes.push(...importedQuotes); // Street operator for efficient addition
-        savedQuotes();
-        alert('Quotes imported successfully!');
-        displayQuotes();
-    } catch (error) {
-        alert('Error importing quotes: ' + error.message);
-    };
-    fileReader.readAsText(file);
+  try {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes); // Street operator for efficient addition
+    savedQuotes();
+    alert('Quotes imported successfully!');
+    displayQuotes();
+  } catch (error) {
+    alert('Error importing quotes: ' + error.message);
+  };
+  fileReader.readAsText(file);
 }
 
 function exportQuotesToJSON() {
-    const jsonData = JSON.stringify(quotes);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  const jsonData = JSON.stringify(quotes);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
+  const link = document.createElement('a');
   link.href = url;
   link.download   
  = 'quotes.json';
@@ -160,18 +159,18 @@ function exportQuotesToJSON() {
 }
 
 async function fetchQuotesFromServer() {
-    try {
-        const response = await fetch(SERVER_URL);
-        const serverQuotes = await response.json();
-        // Simple conflict resolution: Overwrite local quotes with server quotes
-        quotes = serverQuotes.map(serverQuote => ({
-          text: serverQuote.title, // Adjust mapping as needed
-          category: serverQuote.body // Adjust mapping as needed
-        }));
-        saveQuotes();
-        displayQuotes();
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    // Simple conflict resolution: Overwrite local quotes with server quotes
+    quotes = serverQuotes.map(serverQuote => ({
+      text: serverQuote.title, // Adjust mapping as needed
+      category: serverQuote.body // Adjust mapping as needed
+      }));
+      saveQuotes();
+      displayQuotes();
     } catch (error) {
-        console.error('Error syncing quotes:', error);
+      console.error('Error syncing quotes:', error);
     }
 }
 
