@@ -159,7 +159,7 @@ function exportQuotesToJSON() {
   URL.revokeObjectURL(url); // Clean up memory leak
 }
 
-async function syncQuotes() {
+async function fetchQuotesFromServer() {
     try {
         const response = await fetch(SERVER_URL);
         const serverQuotes = await response.json();
@@ -178,9 +178,9 @@ async function syncQuotes() {
 // Initial setup
 updateCategories();
 filterQuotes();
-syncQuotes();
+fetchQuotesFromServer();
 
-setInterval(syncQuotes, 5000); // Sync every 5 seconds
+setInterval(fetchQuotesFromServer, 5000); // Sync every 5 seconds
 
 newQuoteButton.addEventListener('click', showRandomQuote);
 importFile.addEventListener('change', importFromJsonFile);
