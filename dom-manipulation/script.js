@@ -7,6 +7,7 @@ const importFile = document.getElementById('importFile');
 
 const STORAGE_KEY = 'quotes'; // Key for local storage
 const FILTER_KEY = 'lastFilter';
+const SERVER_URL = 'https://jsonplaceholder.typicode.com/posts'; // Replace with your server endpoint
 
 const quotes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; // Load from storage or initialize empty array
 let categories = [];
@@ -99,10 +100,6 @@ function filterQuotes() {
     displayQuotes(filteredQuotes);
     localStorage.setItem(FILTER_KEY, selectedCategory);
 }
-  
-// Initial setup
-updateCategories();
-filterQuotes();
 
 function importFromJsonFile (event) {
     const file = event.target.files[0];
@@ -139,8 +136,29 @@ function exportQuotesToJSON() {
   URL.revokeObjectURL(url); // Clean up memory leak
 }
 
-// Initial display of quotes
-displayQuotes();
+function syncQuotes() {
+    fetch(SERVER_URL)
+      .then(response => response.json())
+      .then(serverQuotes => {
+        // Simple conflict resolution: Overwrite local quotes with server quotes
+        quotes = serverQuotes.map(serverQuote => ({
+          text: serverQuote.title, // Adjust mapping as needed
+          category: serverQuote.body // Adjust mapping as needed
+        }));
+        saveQuotes();
+        displayQuotes();
+    })
+      .catch(error => {
+        console.error('Error syncing quotes:', error);
+    });
+}
+
+// Initial setup
+updateCategories();
+filterQuotes();
+syncQuotes();
+
+setInterval(syncQuotes, 5000); // Sync every 5 seconds
 
 newQuoteButton.addEventListener('click', showRandomQuote);
 importFile.addEventListener('change', importFromJsonFile);
