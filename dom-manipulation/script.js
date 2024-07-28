@@ -40,16 +40,39 @@ function showRandomQuote() {
   
     quoteDisplay.innerHTML = `"${randomQuote.text}"   
    - ${randomQuote.category}`;
-  }
+}
+
+newQuoteButton.addEventListener('click', showRandomQuote);
   
-  newQuoteButton.addEventListener('click', showRandomQuote);
-  
-  function createAddQuoteForm() {
+function createAddQuoteForm() {
     const quoteText = newQuoteText.value;
     const quoteCategory = newQuoteCategory.value;
   
     if (quoteText && quoteCategory) {
       const newQuote = { text: quoteText, category: quoteCategory };
+
+      fetch(SERVER_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newQuote)
+      })
+      .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+          // Handle successful   
+        //post response, e.g., update local quotes if necessary
+            console.log('Quote added successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error adding quote:', error);
+        });
+
       quotes.push(newQuote);
       newQuoteText.value = '';
       newQuoteCategory.value = '';
@@ -60,7 +83,7 @@ function showRandomQuote() {
     } else {
       alert('Please enter both quote and category');
     }
-  }
+}
   
 function saveQuotes() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
