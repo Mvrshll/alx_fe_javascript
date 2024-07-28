@@ -67,10 +67,10 @@ function saveQuotes() {
 
 function updateCategories() {
     categories = Array.from(new Set(quotes.map(quote => quote.category)));
-    populateCategoryFilter();
+    populateCategories();
 }
   
-function populateCategoryFilter() {
+function populateCategories() {
     categoryFilter.innerHTML = '';
     const allOption = document.createElement('option');
     allOption.value = 'all';
