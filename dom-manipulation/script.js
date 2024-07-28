@@ -11,6 +11,20 @@ const quotes = [
   // Add more quotes here
 ];
 
+function createQuoteElement(quote) {
+    const quoteElement = document.createElement('div');
+    quoteElement.textContent = `"${quote.text}" - ${quote.category}`;
+    return quoteElement;
+}
+  
+function displayQuotes() {
+    quoteDisplay.innerHTML = ''; // Clear previous quotes
+    quotes.forEach(quote => {
+      const quoteElement = createQuoteElement(quote);
+      quoteDisplay.appendChild(quoteElement);
+    });
+}
+
 function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
