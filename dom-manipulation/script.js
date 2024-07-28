@@ -136,10 +136,10 @@ function exportQuotesToJSON() {
   URL.revokeObjectURL(url); // Clean up memory leak
 }
 
-function fetchQuotesFromServer() {
-    fetch(SERVER_URL)
-      .then(response => response.json())
-      .then(serverQuotes => {
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(SERVER_URL);
+        const serverQuotes = await response.json();
         // Simple conflict resolution: Overwrite local quotes with server quotes
         quotes = serverQuotes.map(serverQuote => ({
           text: serverQuote.title, // Adjust mapping as needed
@@ -147,10 +147,9 @@ function fetchQuotesFromServer() {
         }));
         saveQuotes();
         displayQuotes();
-    })
-      .catch(error => {
+    } catch (error) {
         console.error('Error syncing quotes:', error);
-    });
+    }
 }
 
 // Initial setup
