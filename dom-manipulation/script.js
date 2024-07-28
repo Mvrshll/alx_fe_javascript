@@ -2,14 +2,19 @@ const quoteDisplay = document.getElementById('quoteDisplay');
 const newQuoteButton = document.getElementById('newQuote');
 const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
+const importFile = document.getElementById('importFile');
 
-const quotes = [
-  { text: 'The only way to do great work is to love what you do.', category: 'Work' },
-  { text: 'In the middle of difficulty lies opportunity.', category: 'Life' },
-  { text: 'Life is like a coin. You can spend it any way you wish, but you only spend it once.', category: 'Life'},
-  { text: 'The best way to predict your future is to create it.', category: 'Work'},
+const STORAGE_KEY = 'quotes'; // Key for local storage
+
+const quotes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; // Load from storage or initialize empty array
+
+// const quotes = [
+  // { text: 'The only way to do great work is to love what you do.', category: 'Work' },
+  //{ text: 'In the middle of difficulty lies opportunity.', category: 'Life' },
+  //{ text: 'Life is like a coin. You can spend it any way you wish, but you only spend it once.', category: 'Life'},
+ //{ text: 'The best way to predict your future is to create it.', category: 'Work'},
   // Add more quotes here
-];
+//];
 
 function createQuoteElement(quote) {
     const quoteElement = document.createElement('div');
@@ -50,5 +55,56 @@ function showRandomQuote() {
     }
   }
   
-  // Initial quote display
-  showRandomQuote();
+function saveQuotes() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
+}
+
+function importFromJsonFile (event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+}
+
+const fileReader = new FileReader();
+fileReader.onload = function(event) {
+    try {
+        const importedQuotes = JSON.parse(event.target.result);
+        quotes.push(...importedQuotes); // Street operator for efficient addition
+        savedQuotes();
+        alert('Quotes imported successfully!');
+        displayQuotes();
+    } catch (error) {
+        alert('Error importing quotes: ' + error.message);
+    };
+    fileReader.readAsText(file);
+}
+
+function exportQuotesToJSON() {
+    const jsonData = JSON.stringify(quotes);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+  link.href = url;
+  link.download   
+ = 'quotes.json';
+  link.click();
+
+  URL.revokeObjectURL(url); // Clean up memory leak
+}
+
+// Initial display of quotes
+displayQuotes();
+
+newQuoteButton.addEventListener('click', showRandomQuote);
+importFile.addEventListener('change', importFromJsonFile);
+
+// Optional: Add button for export functionality
+const exportButton = document.createElement('button');
+exportButton.textContent = 'Export Quotes';
+exportButton.addEventListener('click', exportQuotesToJSON);
+// Add exportButton to your HTML
+
+// Initial quote display
+showRandomQuote();
