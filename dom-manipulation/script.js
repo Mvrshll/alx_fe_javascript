@@ -21,7 +21,7 @@ function showRandomQuote() {
   
   newQuoteButton.addEventListener('click', showRandomQuote);
   
-  function addQuote() {
+  function createAddQuoteForm() {
     const quoteText = newQuoteText.value;
     const quoteCategory = newQuoteCategory.value;
   
