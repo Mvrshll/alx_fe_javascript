@@ -79,7 +79,7 @@ function createAddQuoteForm() {
     updateCategories();
     filterQuotes();
     showRandomQuote(); // Display a new quote, including the added one
-    } else {
+     } else {
       alert('Please enter both quote and category');
     }
 }
